@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Garlic & Co — Order Online</title>
+<meta name="description" content="Order seafood boil platters, grilled fish and prawns from Garlic & Co, Ausspannplatz, Windhoek — pickup or Yango delivery.">
+<meta name="theme-color" content="#1c1517">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="images/icon-192.png" sizes="192x192" type="image/png">
+<link rel="icon" href="images/icon-512.png" sizes="512x512" type="image/png">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Garlic & Co">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1c1517;
+  --bg-2:#241a1d;
+  --panel:rgba(255,255,255,0.055);
+  --panel-strong:rgba(255,255,255,0.09);
+  --border:rgba(255,255,255,0.12);
+  --border-soft:rgba(255,255,255,0.07);
+  --cream:#f6efe8;
+  --muted:#b9a9ac;
+  --blush:#e8a6a0;
+  --blush-soft:#f0c2bd;
+  --gold:#c9974a;
+  --gold-soft:#e0b876;
+  --danger:#e8746a;
+  --radius:22px;
+  --radius-sm:14px;
+  --shadow: 0 20px 60px -20px rgba(0,0,0,0.6);
+  --font-display:'Fraunces', serif;
+  --font-body:'Manrope', sans-serif;
+  --font-mono:'IBM Plex Mono', monospace;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(232,166,160,0.10), transparent 60%),
+    radial-gradient(1000px 500px at 100% 10%, rgba(201,151,74,0.10), transparent 55%),
+    var(--bg);
+  color:var(--cream);
+  min-height:100vh;
+  padding-bottom:96px;
+  overflow-x:hidden;
+}
+img{max-width:100%; display:block;}
+button{font-family:inherit; cursor:pointer;}
+a{color:inherit;}
+
+/* ---------- utility: glass ---------- */
+.glass{
+  background:var(--panel);
+  border:1px solid var(--border);
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+}
+.glass-strong{
+  background:var(--panel-strong);
+  border:1px solid var(--border);
+  backdrop-filter:blur(24px) saturate(150%);
+  -webkit-backdrop-filter:blur(24px) saturate(150%);
+}
+
+/* ---------- dotted ring, signature motif ---------- */
+.dot-ring{
+  --n:34;
+  position:relative;
+  width:1em; height:1em;
+}
+.dot-ring svg{width:100%;height:100%;}
+.dot-ring circle{fill:var(--blush);}
+.spin-ring{animation:spin 2.6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ---------- preloader ---------- */
+#preloader{
+  position:fixed; inset:0; z-index:999;
+  background:var(--bg);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:18px;
+  transition:opacity .5s ease, visibility .5s ease;
+}
+#preloader.hide{opacity:0; visibility:hidden; pointer-events:none;}
+#preloader .dot-ring{width:64px; height:64px;}
+#preloader p{font-family:var(--font-mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted);}
+
+/* ---------- install banner ---------- */
+#installBanner{
+  position:sticky; top:0; z-index:60;
+  display:none;
+  align-items:center; gap:12px;
+  padding:10px 16px;
+  font-size:13px;
+  border-bottom:1px solid var(--border-soft);
+  background:linear-gradient(90deg, rgba(232,166,160,0.14), rgba(201,151,74,0.14));
+  backdrop-filter:blur(14px);
+}
+#installBanner.show{display:flex;}
+#installBanner img{width:26px; height:26px; border-radius:8px; flex-shrink:0;}
+#installBanner .txt{flex:1; line-height:1.3;}
+#installBanner .txt b{display:block; font-family:var(--font-display); font-size:14px; font-weight:600;}
+#installBanner button{
+  background:var(--cream); color:var(--bg); border:none;
+  padding:8px 14px; border-radius:100px; font-weight:700; font-size:12.5px;
+  white-space:nowrap;
+}
+#installBanner .close{
+  background:transparent; color:var(--muted); padding:4px; font-size:18px; line-height:1;
+}
+
+/* ---------- header ---------- */
+header{
+  position:sticky; top:0; z-index:50;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 18px;
+  border-bottom:1px solid var(--border-soft);
+  background:rgba(28,21,23,0.55);
+  backdrop-filter:blur(18px) saturate(160%);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+}
+.brand{display:flex; align-items:center; gap:10px;}
+.brand img{width:38px; height:38px; border-radius:50%;}
+.brand-name{font-family:var(--font-display); font-weight:600; font-size:17px; letter-spacing:.01em;}
+.brand-tag{font-size:10.5px; color:var(--muted); font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; margin-top:1px;}
+.header-actions{display:flex; align-items:center; gap:10px;}
+.icon-btn{
+  position:relative;
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--border);
+  background:var(--panel);
+  color:var(--cream);
+}
+.badge{
+  position:absolute; top:-4px; right:-4px;
+  min-width:19px; height:19px; padding:0 4px;
+  border-radius:50%;
+  background:var(--blush);
+  color:#2a1613;
+  font-size:11px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-mono);
+  border:2px solid var(--bg);
+}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;
+  margin:14px 14px 6px;
+  border-radius:28px;
+  overflow:hidden;
+  aspect-ratio:4/5;
+  max-height:78vh;
+  box-shadow:var(--shadow);
+}
+.hero img{width:100%; height:100%; object-fit:cover;}
+.hero::after{
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(20,14,15,0.05) 0%, rgba(20,14,15,0.15) 45%, rgba(15,10,11,0.92) 100%);
+}
+.hero-content{
+  position:absolute; left:0; right:0; bottom:0;
+  padding:22px 20px 24px;
+  z-index:2;
+}
+.hero-eyebrow{
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--gold-soft);
+  margin-bottom:10px;
+}
+.hero-eyebrow .dot-ring{width:11px; height:11px;}
+.hero h1{
+  font-family:var(--font-display);
+  font-size:clamp(30px, 8vw, 42px);
+  line-height:1.02;
+  margin:0 0 8px;
+  font-weight:600;
+  letter-spacing:-0.01em;
+}
+.hero h1 em{font-style:italic; color:var(--blush-soft); font-weight:500;}
+.hero p{
+  color:var(--cream); opacity:.82;
+  font-size:14.5px; line-height:1.5; margin:0 0 18px; max-width:34ch;
+}
+.hero-ticket{
+  display:flex; align-items:center; gap:14px;
+  padding:12px 14px;
+  border-radius:16px;
+}
+.hero-ticket .price{
+  font-family:var(--font-display); font-size:24px; font-weight:600; color:var(--gold-soft);
+}
+.hero-ticket .info{flex:1; min-width:0;}
+.hero-ticket .info b{display:block; font-size:13.5px; font-weight:700;}
+.hero-ticket .info span{font-size:11.5px; color:var(--muted);}
+.hero-ticket button{
+  background:var(--blush); color:#2a1613; border:none;
+  padding:11px 16px; border-radius:100px; font-weight:800; font-size:13px;
+  flex-shrink:0;
+}
+
+/* ---------- status strip ---------- */
+.status-strip{
+  display:flex; align-items:center; gap:8px;
+  margin:16px 18px 4px;
+  font-size:12px; color:var(--muted);
+}
+.status-dot{width:7px; height:7px; border-radius:50%; background:#7fd28a; box-shadow:0 0 0 3px rgba(127,210,138,0.18); flex-shrink:0;}
+
+/* ---------- category rail ---------- */
+.cat-rail{
+  display:flex; gap:9px;
+  overflow-x:auto;
+  padding:16px 18px 6px;
+  scrollbar-width:none;
+}
+.cat-rail::-webkit-scrollbar{display:none;}
+.cat-chip{
+  flex-shrink:0;
+  padding:9px 16px;
+  border-radius:100px;
+  border:1px solid var(--border);
+  background:var(--panel);
+  font-size:13px; font-weight:600; color:var(--muted);
+  white-space:nowrap;
+  transition:all .2s ease;
+}
+.cat-chip.active{
+  background:var(--cream); color:var(--bg); border-color:var(--cream);
+}
+
+/* ---------- sections ---------- */
+.section{padding:26px 18px 6px;}
+.section-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;}
+.section-head h2{
+  font-family:var(--font-display); font-size:22px; font-weight:600; margin:0;
+  display:flex; align-items:center; gap:9px;
+}
+.section-head .count{font-family:var(--font-mono); font-size:11.5px; color:var(--muted);}
+.section-sub{font-size:13px; color:var(--muted); margin:2px 0 16px; line-height:1.5;}
+
+/* ---------- product cards ---------- */
+.card-grid{display:flex; flex-direction:column; gap:12px;}
+.p-card{
+  display:flex; gap:10px; align-items:stretch;
+  padding:9px;
+  border-radius:calc(var(--radius) + 4px);
+  background:linear-gradient(155deg, rgba(255,255,255,0.065), rgba(255,255,255,0.015));
+  border:1px solid rgba(255,255,255,0.09);
+  box-shadow:0 16px 34px -20px rgba(0,0,0,0.65), 0 2px 8px rgba(0,0,0,0.25);
+}
+.p-card .thumb{
+  width:100px; flex-shrink:0; position:relative; overflow:hidden;
+  border-radius:16px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.12), 0 10px 22px -12px rgba(0,0,0,0.7);
+  background:linear-gradient(160deg, rgba(255,255,255,0.08), rgba(255,255,255,0));
+}
+.p-card .thumb img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  filter:saturate(1.1) contrast(1.04);
+  transition:transform .6s cubic-bezier(.22,1,.36,1);
+}
+.p-card .thumb::after{
+  content:'';
+  position:absolute; inset:0; border-radius:16px;
+  background:linear-gradient(200deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 22%), linear-gradient(180deg, rgba(0,0,0,0) 58%, rgba(0,0,0,0.28) 100%);
+  pointer-events:none;
+}
+.p-card .body{
+  flex:1; min-width:0;
+  padding:6px 6px 6px 0;
+  display:flex; flex-direction:column; justify-content:center; gap:4px;
+}
+.p-card .top-row{display:flex; align-items:flex-start; justify-content:space-between; gap:8px;}
+.p-card h3{font-family:var(--font-display); font-size:16px; font-weight:600; margin:0; line-height:1.2;}
+.p-card .desc{font-size:12px; color:var(--muted); line-height:1.4; margin:0;}
+.p-card .bottom-row{display:flex; align-items:center; justify-content:space-between; margin-top:6px;}
+.p-card .price{font-family:var(--font-mono); font-weight:600; font-size:14.5px; color:var(--gold-soft);}
+.p-card .price small{color:var(--muted); font-weight:400; font-size:10.5px;}
+
+.add-btn{
+  width:34px; height:34px; border-radius:50%;
+  border:1px solid var(--border);
+  background:var(--panel-strong);
+  color:var(--cream);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; font-weight:700;
+  flex-shrink:0;
+  transition:transform .15s ease, background .15s ease;
+}
+.add-btn:active{transform:scale(0.88);}
+.stepper{
+  display:flex; align-items:center; gap:0;
+  background:var(--panel-strong);
+  border:1px solid var(--border);
+  border-radius:100px;
+  overflow:hidden;
+}
+.stepper button{
+  width:30px; height:30px; border:none; background:transparent; color:var(--cream);
+  font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center;
+}
+.stepper button:active{background:rgba(255,255,255,0.08);}
+.stepper span{
+  min-width:20px; text-align:center; font-family:var(--font-mono); font-size:13px; font-weight:600;
+}
+
+/* ---------- list-style items (extras/sides) ---------- */
+.list-card{
+  border-radius:var(--radius-sm);
+  padding:12px 14px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.list-card + .list-card{margin-top:8px;}
+.list-card .li-name{font-size:14px; font-weight:600;}
+.list-card .li-sub{font-size:11px; color:var(--muted); margin-top:1px;}
+.list-card .li-right{display:flex; align-items:center; gap:12px; flex-shrink:0;}
+.list-card .price{font-family:var(--font-mono); font-size:13px; color:var(--gold-soft); font-weight:600; white-space:nowrap;}
+
+/* ---------- divider with dots (signature) ---------- */
+.dot-divider{
+  display:flex; align-items:center; gap:8px;
+  margin:30px 18px 8px;
+  color:var(--muted); font-family:var(--font-mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+}
+.dot-divider .line{flex:1; height:1px; background:repeating-linear-gradient(90deg, var(--border) 0 4px, transparent 4px 9px);}
+
+/* ---------- about / footer ---------- */
+.about{
+  margin:34px 14px 0;
+  padding:24px 20px;
+  border-radius:24px;
+  text-align:center;
+}
+.about .dot-ring{width:46px; height:46px; margin:0 auto 14px;}
+.about h2{font-family:var(--font-display); font-size:21px; margin:0 0 6px; font-weight:600;}
+.about p{font-size:13px; color:var(--muted); line-height:1.6; max-width:34ch; margin:0 auto;}
+.info-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px; text-align:left;}
+.info-cell{padding:12px; border-radius:14px; background:rgba(255,255,255,0.04); border:1px solid var(--border-soft);}
+.info-cell .lbl{font-family:var(--font-mono); font-size:9.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:4px;}
+.info-cell .val{font-size:13px; font-weight:600; line-height:1.35;}
+
+footer{
+  text-align:center; padding:30px 20px 20px; color:var(--muted); font-size:11.5px; line-height:1.7;
+}
+footer a{text-decoration:underline;}
+
+/* ---------- floating cart bar ---------- */
+#cartBar{
+  position:fixed; left:14px; right:14px; bottom:14px; z-index:55;
+  display:none; align-items:center; gap:12px;
+  padding:12px 12px 12px 18px;
+  border-radius:100px;
+  box-shadow:0 15px 40px -10px rgba(0,0,0,0.65);
+  background:linear-gradient(100deg, #2a1e1c, #241a1d);
+  border:1px solid rgba(255,255,255,0.14);
+}
+#cartBar.show{display:flex;}
+#cartBar .cb-info{flex:1; min-width:0;}
+#cartBar .cb-count{font-size:11.5px; color:var(--muted); font-family:var(--font-mono);}
+#cartBar .cb-total{font-family:var(--font-display); font-size:17px; font-weight:600; color:var(--cream);}
+#cartBar .cb-btn{
+  background:var(--blush); color:#2a1613; border:none;
+  padding:13px 20px; border-radius:100px; font-weight:800; font-size:13.5px;
+  display:flex; align-items:center; gap:6px;
+}
+
+/* ---------- sheet (bottom drawer) ---------- */
+.sheet-overlay{
+  position:fixed; inset:0; z-index:80;
+  background:rgba(10,7,7,0.6);
+  backdrop-filter:blur(4px);
+  opacity:0; visibility:hidden;
+  transition:opacity .3s ease, visibility .3s ease;
+}
+.sheet-overlay.open{opacity:1; visibility:visible;}
+.sheet{
+  position:fixed; left:0; right:0; bottom:0; z-index:81;
+  max-height:88vh;
+  background:var(--bg-2);
+  border-top:1px solid var(--border);
+  border-radius:26px 26px 0 0;
+  box-shadow:0 -20px 60px rgba(0,0,0,0.5);
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.32,.72,0,1);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+.sheet.open{transform:translateY(0);}
+.sheet-handle{width:38px; height:4px; border-radius:4px; background:var(--border); margin:10px auto 4px; flex-shrink:0;}
+.sheet-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 20px 14px;
+  border-bottom:1px solid var(--border-soft);
+  flex-shrink:0;
+}
+.sheet-head h3{font-family:var(--font-display); font-size:19px; font-weight:600; margin:0;}
+.sheet-close{
+  width:32px; height:32px; border-radius:50%; border:1px solid var(--border); background:var(--panel);
+  display:flex; align-items:center; justify-content:center; font-size:16px; color:var(--cream);
+}
+.sheet-body{padding:16px 20px 20px; overflow-y:auto; flex:1;}
+.sheet-foot{padding:14px 20px calc(18px + env(safe-area-inset-bottom)); border-top:1px solid var(--border-soft); flex-shrink:0;}
+
+/* cart items */
+.cart-item{display:flex; gap:12px; align-items:center; padding:11px 0; border-bottom:1px solid var(--border-soft);}
+.cart-item:last-child{border-bottom:none;}
+.cart-item img{width:56px; height:56px; border-radius:12px; object-fit:cover; flex-shrink:0;}
+.cart-item .ci-info{flex:1; min-width:0;}
+.cart-item .ci-name{font-size:13.5px; font-weight:600;}
+.cart-item .ci-price{font-family:var(--font-mono); font-size:11.5px; color:var(--muted); margin-top:1px;}
+.cart-item .ci-remove{font-size:11px; color:var(--danger); margin-top:3px; text-decoration:underline; background:none; border:none; padding:0;}
+
+.empty-cart{text-align:center; padding:40px 10px; color:var(--muted);}
+.empty-cart .dot-ring{width:40px; height:40px; margin:0 auto 12px; opacity:.5;}
+.empty-cart p{font-size:13.5px; margin:0;}
+
+.row-line{display:flex; align-items:center; justify-content:space-between; font-size:13.5px; padding:5px 0;}
+.row-line.total{font-size:16px; font-weight:700; padding-top:12px; border-top:1px solid var(--border-soft); margin-top:6px; font-family:var(--font-display);}
+.row-line .val{font-family:var(--font-mono); font-weight:600;}
+.row-line.total .val{color:var(--gold-soft);}
+
+.primary-btn{
+  width:100%; padding:16px; border:none; border-radius:100px;
+  background:var(--blush); color:#2a1613; font-weight:800; font-size:14.5px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.primary-btn:disabled{opacity:.4;}
+.secondary-btn{
+  width:100%; padding:15px; border-radius:100px; border:1px solid var(--border);
+  background:transparent; color:var(--cream); font-weight:700; font-size:14px; margin-top:8px;
+}
+
+/* fulfillment toggle */
+.toggle-group{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 16px;}
+.toggle-opt{
+  flex:1 1 92px; padding:13px 8px; border-radius:14px; border:1px solid var(--border);
+  background:var(--panel); text-align:center; font-size:11.5px; font-weight:700;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+}
+.toggle-opt .ic{font-size:18px;}
+.toggle-opt.active{background:rgba(232,166,160,0.14); border-color:var(--blush);}
+.toggle-opt.active .ic{filter:none;}
+
+/* form fields */
+.field{margin-bottom:13px;}
+.field label{display:block; font-size:11.5px; color:var(--muted); margin-bottom:6px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em;}
+.field input, .field textarea{
+  width:100%; padding:13px 14px; border-radius:14px;
+  border:1px solid var(--border); background:rgba(255,255,255,0.04); color:var(--cream);
+  font-family:var(--font-body); font-size:14.5px; outline:none;
+}
+.field input:focus, .field textarea:focus{border-color:var(--blush);}
+.field input::placeholder, .field textarea::placeholder{color:rgba(246,239,232,0.32);}
+.hint{font-size:11px; color:var(--muted); margin-top:6px; line-height:1.5;}
+
+/* order confirmation */
+.order-number-box{
+  text-align:center; padding:22px 16px; border-radius:18px;
+  background:linear-gradient(135deg, rgba(232,166,160,0.13), rgba(201,151,74,0.1));
+  border:1px solid rgba(232,166,160,0.3);
+  margin-bottom:18px;
+}
+.order-number-box .lbl{font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); margin-bottom:8px;}
+.order-number-box .num{font-family:var(--font-mono); font-size:26px; font-weight:600; color:var(--gold-soft); letter-spacing:.03em;}
+
+.pay-method{
+  display:flex; gap:10px; align-items:flex-start;
+  padding:13px 14px; border-radius:14px; background:rgba(255,255,255,0.04); border:1px solid var(--border-soft);
+  margin-bottom:10px;
+}
+.pay-method .pm-ic{
+  width:34px; height:34px; border-radius:10px; background:var(--panel-strong); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+}
+.pay-method .pm-name{font-size:13.5px; font-weight:700;}
+.pay-method .pm-detail{font-size:11.5px; color:var(--muted); margin-top:2px; line-height:1.5;}
+.pay-method .pm-detail b{color:var(--cream); font-family:var(--font-mono); font-weight:600;}
+
+.step-badge{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:20px; height:20px; border-radius:50%; background:var(--blush); color:#2a1613;
+  font-size:11px; font-weight:800; font-family:var(--font-mono); flex-shrink:0;
+}
+.confirm-step{display:flex; gap:10px; align-items:flex-start; margin-bottom:12px;}
+.confirm-step p{font-size:12.5px; color:var(--muted); margin:2px 0 0; line-height:1.55;}
+.confirm-step p b{color:var(--cream);}
+
+/* toast */
+.ref-callout{margin:0 0 16px;padding:14px;border-radius:16px;border:1px dashed var(--gold);background:rgba(201,151,74,0.10);text-align:center}
+.ref-callout p{margin:0 0 8px;font-size:13px;line-height:1.5}
+.ref-callout .ref-val{font-family:var(--font-mono);font-size:17px;font-weight:600;color:var(--gold-soft);word-break:break-word}
+.ref-callout button{margin-top:10px;background:var(--cream);color:var(--bg);border:none;padding:8px 16px;border-radius:100px;font-weight:800;font-size:12.5px}
+#toast{
+  position:fixed; left:50%; bottom:100px; transform:translate(-50%, 20px);
+  z-index:90; padding:12px 20px; border-radius:100px;
+  background:var(--cream); color:var(--bg);
+  font-size:13px; font-weight:700;
+  opacity:0; pointer-events:none;
+  transition:all .3s cubic-bezier(.32,.72,0,1);
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  display:flex; align-items:center; gap:8px;
+  white-space:nowrap;
+}
+#toast.show{opacity:1; transform:translate(-50%, 0);}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+}
+
+::-webkit-scrollbar{width:0; height:0;}
+
+/* =====================================================================
+   RESPONSIVE — TABLET (600px+) & DESKTOP (1024px+)
+   Mobile keeps the native bottom-sheet ordering-app feel above.
+   Larger screens open the layout into a real site: wider hero,
+   multi-column menu grid, and a persistent side cart.
+   ===================================================================== */
+
+/* ---------- tablet: 600–1023px ---------- */
+@media (min-width:600px){
+  header{padding:16px clamp(18px,4vw,40px);}
+  .hero{margin:16px clamp(18px,4vw,40px) 6px; aspect-ratio:16/9; max-height:520px;}
+  .status-strip, .cat-rail, .section, .dot-divider{padding-left:clamp(18px,4vw,40px); padding-right:clamp(18px,4vw,40px);}
+  .about{margin-left:clamp(18px,4vw,40px); margin-right:clamp(18px,4vw,40px);}
+  .dot-divider{margin-left:clamp(18px,4vw,40px); margin-right:clamp(18px,4vw,40px);}
+
+  .card-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
+  .p-card{flex-direction:column; padding:10px;}
+  .p-card .thumb{width:100%; aspect-ratio:4/3; border-radius:14px;}
+  .p-card .thumb::after{border-radius:14px;}
+  .p-card .body{padding:12px 6px 4px;}
+
+  .info-grid{grid-template-columns:repeat(4,1fr);}
+}
+
+/* ---------- desktop: 1024px+ ---------- */
+@media (min-width:1024px){
+  body{padding-bottom:40px;}
+
+  #installBanner{display:none !important;}
+
+  header{
+    padding:18px clamp(24px,5vw,64px);
+    max-width:1280px; margin:0 auto;
+  }
+  .brand img{width:44px; height:44px;}
+  .brand-name{font-size:19px;}
+
+  /* hero opens into a wide banner with room to breathe */
+  .hero{
+    margin:22px auto 10px; max-width:1280px;
+    aspect-ratio:auto; height:min(64vh, 560px); max-height:none;
+    padding:0 clamp(24px,5vw,64px);
+  }
+  .hero-content{padding:0; max-width:640px; top:0; display:flex; flex-direction:column; justify-content:flex-end; padding-bottom:56px; left:clamp(24px,5vw,64px); right:auto;}
+  .hero h1{font-size:clamp(42px,4.2vw,58px);}
+  .hero p{font-size:16px; max-width:40ch;}
+  .hero-ticket{max-width:420px;}
+
+  .status-strip, .cat-rail, .section, .dot-divider, .about{
+    max-width:1280px; margin-left:auto; margin-right:auto;
+  }
+  .status-strip{padding-left:clamp(24px,5vw,64px); padding-right:clamp(24px,5vw,64px);}
+  .cat-rail{padding:20px clamp(24px,5vw,64px) 8px; overflow-x:visible; flex-wrap:wrap; position:sticky; top:75px; z-index:40; background:rgba(28,21,23,0.55); backdrop-filter:blur(18px) saturate(160%); -webkit-backdrop-filter:blur(18px) saturate(160%); margin-bottom:0;}
+  .section{padding:34px clamp(24px,5vw,64px) 6px;}
+  .dot-divider{margin-left:auto; margin-right:auto; padding-left:clamp(24px,5vw,64px); padding-right:clamp(24px,5vw,64px); max-width:calc(1280px);}
+  .section-head h2{font-size:26px;}
+
+  .card-grid{grid-template-columns:repeat(3,1fr); gap:18px;}
+  .p-card{transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;}
+  .p-card:hover{transform:translateY(-5px); box-shadow:0 28px 54px -18px rgba(0,0,0,0.6); border-color:rgba(232,166,160,0.35);}
+  .p-card:hover .thumb img{transform:scale(1.08);}
+  .p-card .thumb{aspect-ratio:5/4;}
+
+  #extrasList, #sidesList{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:10px 14px;
+  }
+  .list-card + .list-card{margin-top:0;}
+  .list-card{transition:transform .15s ease;}
+  .list-card:hover{transform:translateY(-2px);}
+
+  .about{padding:40px clamp(24px,5vw,64px); display:grid; grid-template-columns:1fr 1.1fr; gap:40px; text-align:left; align-items:center;}
+  .about .dot-ring{margin:0 0 14px;}
+  .about h2{font-size:26px;}
+  .about p{max-width:44ch; margin:0;}
+  .info-grid{grid-template-columns:repeat(2,1fr); margin-top:0;}
+
+  footer{max-width:1280px; margin:0 auto;}
+
+  /* floating cart bar: a compact pill anchored bottom-right, not full width */
+  #cartBar{left:auto; right:clamp(24px,5vw,64px); width:min(380px, 32vw); border-radius:100px;}
+
+  /* order sheets become centered modal dialogs instead of bottom drawers */
+  .sheet-overlay{display:flex; align-items:center; justify-content:center;}
+  .sheet{
+    left:50%; right:auto; bottom:auto; top:50%;
+    transform:translate(-50%,-46%);
+    width:440px; max-width:calc(100vw - 48px); max-height:85vh;
+    border-radius:26px;
+    opacity:0; visibility:hidden;
+    transition:transform .3s cubic-bezier(.32,.72,0,1), opacity .3s ease, visibility .3s ease;
+  }
+  .sheet.open{transform:translate(-50%,-50%); opacity:1; visibility:visible;}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+</head>
+<body>
+
+<!-- ============ PRELOADER ============ -->
+<div id="preloader">
+  <div class="dot-ring spin-ring">
+    <svg viewBox="0 0 100 100"><g id="preloaderDots"></g></svg>
+  </div>
+  <p>Warming the garlic butter…</p>
+</div>
+
+<!-- ============ INSTALL BANNER ============ -->
+<div id="installBanner">
+  <img src="images/logo.png" alt="">
+  <div class="txt"><b>Add Garlic & Co to your home screen</b>Order faster, like a real app</div>
+  <button id="installBtn">Install</button>
+  <button class="close" id="installClose" aria-label="Dismiss">&times;</button>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="brand">
+    <img src="images/logo.png" alt="Garlic & Co">
+    <div>
+      <div class="brand-name">Garlic &amp; Co</div>
+      <div class="brand-tag">Est. 2020 · Pure food. Pure comfort.</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn" id="openCartHeader" aria-label="Open cart">
+      🛒
+      <span class="badge" id="headerBadge" style="display:none;">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <img src="images/hero-boil.jpg" alt="Garlic & Co seafood boil platter with prawns, mussels, crab, sausage and corn">
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="dot-ring"><svg viewBox="0 0 100 100"><g class="heroDots"></g></svg></span>
+      Ausspannplatz · Open Mon–Sun
+    </div>
+    <h1>The Works, <em>done right.</em></h1>
+    <p>Tiger prawns, mussels, sausage, potatoes &amp; corn, drenched in our Cajun lemon &amp; herb garlic butter.</p>
+    <div class="hero-ticket glass-strong">
+      <div class="price">N$220</div>
+      <div class="info"><b>Platter for 1</b><span>1 crab leg + The Works</span></div>
+      <button onclick="scrollToMenu()">Order</button>
+    </div>
+  </div>
+</section>
+
+<div class="status-strip">
+  <span class="status-dot"></span> Taking orders today · Rohobether Rd 66–68, next to King's Lounge
+</div>
+
+<!-- ============ CATEGORY RAIL ============ -->
+<div class="cat-rail" id="catRail">
+  <button class="cat-chip active" data-target="cat-platters">Boil Platters</button>
+  <button class="cat-chip" data-target="cat-build">Build Your Own</button>
+  <button class="cat-chip" data-target="cat-assemble">Grilled Fish &amp; Prawns</button>
+  <button class="cat-chip" data-target="cat-snoek">Snoek Combos</button>
+  <button class="cat-chip" data-target="cat-sides">Sides</button>
+</div>
+
+<!-- ============ PLATTERS ============ -->
+<section class="section" id="cat-platters">
+  <div class="section-head"><h2>Boil Platters</h2><span class="count">Bestsellers</span></div>
+  <p class="section-sub">Every platter comes with The Works — tiger prawns, mussels, sausage, potatoes and corn in Cajun lemon &amp; herb garlic butter.</p>
+  <div class="card-grid" id="platterGrid"></div>
+</section>
+
+<div class="dot-divider"><span class="dot-ring"><svg viewBox="0 0 100 100"><g class="miniDots"></g></svg></span><span class="line"></span></div>
+
+<!-- ============ BUILD YOUR OWN ============ -->
+<section class="section" id="cat-build">
+  <div class="section-head"><h2>Build Your Own Boil</h2><span class="count">From N$120</span></div>
+  <p class="section-sub">Start with a base boil, then add exactly what you want per portion.</p>
+  <div class="card-grid" id="buildFeature"></div>
+  <div style="margin-top:14px;" id="extrasList"></div>
+</section>
+
+<div class="dot-divider"><span class="dot-ring"><svg viewBox="0 0 100 100"><g class="miniDots"></g></svg></span><span class="line"></span></div>
+
+<!-- ============ ASSEMBLE / GRILLED ============ -->
+<section class="section" id="cat-assemble">
+  <div class="section-head"><h2>Grilled Fish &amp; Prawns</h2><span class="count">Assemble your own</span></div>
+  <p class="section-sub">Whole angel fish, prawn skewers and grilled classics — mix and match.</p>
+  <div class="card-grid" id="assembleGrid"></div>
+</section>
+
+<div class="dot-divider"><span class="dot-ring"><svg viewBox="0 0 100 100"><g class="miniDots"></g></svg></span><span class="line"></span></div>
+
+<!-- ============ SNOEK COMBOS ============ -->
+<section class="section" id="cat-snoek">
+  <div class="section-head"><h2>Snoek Combos</h2><span class="count">Fixed price meals</span></div>
+  <p class="section-sub">Grilled snoek, prawns, mussels and calamari — plated with your choice of side.</p>
+  <div class="card-grid" id="snoekGrid"></div>
+</section>
+
+<div class="dot-divider"><span class="dot-ring"><svg viewBox="0 0 100 100"><g class="miniDots"></g></svg></span><span class="line"></span></div>
+
+<!-- ============ SIDES ============ -->
+<section class="section" id="cat-sides">
+  <div class="section-head"><h2>Sides</h2><span class="count">Add to any order</span></div>
+  <div id="sidesList"></div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<div class="about glass">
+  <span class="dot-ring"><svg viewBox="0 0 100 100"><g class="miniDots"></g></svg></span>
+  <h2>Pure food. Pure comfort.</h2>
+  <p>Everything's grilled fresh and finished in our garlic butter, made small-batch, made to order.</p>
+  <div class="info-grid">
+    <div class="info-cell"><div class="lbl">Location</div><div class="val">Rohobether Rd 66–68, Ausspannplatz — next to King's Lounge</div></div>
+    <div class="info-cell"><div class="lbl">Hours</div><div class="val">Monday – Sunday</div></div>
+    <div class="info-cell"><div class="lbl">Call</div><div class="val">+264 81 638 7232</div></div>
+    <div class="info-cell"><div class="lbl">Delivery</div><div class="val">Yango on request, or free pickup</div></div>
+  </div>
+</div>
+
+<footer>
+  Garlic &amp; Co · Windhoek, Namibia<br>
+  Orders confirmed by payment reference · <a href="tel:+264816387232">+264 81 638 7232</a>
+</footer>
+
+<!-- ============ FLOATING CART BAR ============ -->
+<div id="cartBar">
+  <div class="cb-info">
+    <div class="cb-count" id="cbCount">0 items</div>
+    <div class="cb-total" id="cbTotal">N$0</div>
+  </div>
+  <button class="cb-btn" id="openCartFromBar">View cart →</button>
+</div>
+
+<!-- ============ CART SHEET ============ -->
+<div class="sheet-overlay" id="cartOverlay"></div>
+<div class="sheet" id="cartSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <h3>Your order</h3>
+    <button class="sheet-close" id="closeCart">&times;</button>
+  </div>
+  <div class="sheet-body" id="cartBody"></div>
+  <div class="sheet-foot" id="cartFoot" style="display:none;">
+    <div class="row-line"><span>Subtotal</span><span class="val" id="sumSubtotal">N$0</span></div>
+    <div class="row-line total"><span>Total</span><span class="val" id="sumTotal">N$0</span></div>
+    <button class="primary-btn" id="goCheckout" style="margin-top:12px;">Checkout →</button>
+  </div>
+</div>
+
+<!-- ============ CHECKOUT SHEET ============ -->
+<div class="sheet-overlay" id="checkoutOverlay"></div>
+<div class="sheet" id="checkoutSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <h3>Checkout</h3>
+    <button class="sheet-close" id="closeCheckout">&times;</button>
+  </div>
+  <div class="sheet-body">
+    <div class="field">
+      <label>Your name</label>
+      <input type="text" id="custName" placeholder="e.g. Maria Shikongo" autocomplete="name">
+    </div>
+    <div class="field">
+      <label>WhatsApp / phone number</label>
+      <input type="tel" id="custPhone" placeholder="e.g. 081 234 5678" autocomplete="tel">
+    </div>
+
+    <label style="display:block; font-size:11.5px; color:var(--muted); margin-bottom:6px; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em;">Fulfillment</label>
+    <div class="toggle-group">
+      <button class="toggle-opt active" id="optPickup" data-mode="pickup">
+        <span class="ic">🏠</span> Pickup — Free
+      </button>
+      <button class="toggle-opt" id="optDelivery" data-mode="delivery">
+        <span class="ic">🛵</span> Yango Delivery
+      </button>
+      <button class="toggle-opt" id="optDineIn" data-mode="dinein">
+        <span class="ic">🍽️</span> I'll Eat There
+      </button>
+    </div>
+
+    <div id="pickupNote" class="hint" style="margin-bottom:14px;">Ready at Rohobether Rd 66–68, Ausspannplatz (next to King's Lounge). We'll message you when it's ready.</div>
+    <div id="deliveryFields" style="display:none;">
+      <div class="field">
+        <label>Delivery address</label>
+        <textarea id="custAddress" rows="2" placeholder="Street, area, landmark..."></textarea>
+      </div>
+      <div class="hint" style="margin-bottom:14px;">Delivery is ~N$40 (varies by distance) via Yango — the exact fare is confirmed with you on WhatsApp before you pay.</div>
+    </div>
+    <div id="dineInNote" class="hint" style="display:none; margin-bottom:14px;">Come find us at Rohobether Rd 66–68, Ausspannplatz (next to King's Lounge) — we'll have your order ready to serve at a table. Let us know your arrival time in the notes below.</div>
+
+    <div class="field">
+      <label>Notes (optional)</label>
+      <textarea id="custNotes" rows="2" placeholder="Spice level, allergies, anything else..."></textarea>
+    </div>
+
+    <div class="hint" style="margin-bottom:14px;">💡 You'll get an order number on the next step. Please use your <b>name + order number</b> as the reference when you pay.</div>
+
+    <div class="row-line"><span>Subtotal</span><span class="val" id="coSubtotal">N$0</span></div>
+    <div class="row-line total"><span>Total due</span><span class="val" id="coTotal">N$0</span></div>
+  </div>
+  <div class="sheet-foot">
+    <button class="primary-btn" id="reviewOrderBtn">Review &amp; get order number →</button>
+  </div>
+</div>
+
+<!-- ============ CONFIRMATION SHEET ============ -->
+<div class="sheet-overlay" id="confirmOverlay"></div>
+<div class="sheet" id="confirmSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <h3>Confirm &amp; pay</h3>
+    <button class="sheet-close" id="closeConfirm">&times;</button>
+  </div>
+  <div class="sheet-body">
+    <div class="ref-callout">
+      <p><b>Important:</b> when you pay, use your <b>name and order number</b> as the payment reference, exactly like this:</p>
+      <div class="ref-val" id="refCallout">GC-0000 · Name</div>
+      <button type="button" id="copyRefBtn">Copy reference</button>
+    </div>
+    <div class="order-number-box">
+      <div class="lbl">Your order reference</div>
+      <div class="num" id="orderNumDisplay">GC-0000</div>
+    </div>
+
+    <div class="confirm-step">
+      <span class="step-badge">1</span>
+      <p><b>Pay the total</b> using one of the methods below. Use your <b>name + order number</b> as the payment reference so we can match your payment instantly. Without it, we may not be able to confirm your order.</p>
+    </div>
+
+    <div class="pay-method">
+      <div class="pm-ic">🏦</div>
+      <div><div class="pm-name">EFT / Bank Transfer</div>
+        <div class="pm-detail">Garlic &amp; Co · FNB Namibia<br>Acc: <b>[Business account number]</b><br>Ref: <b id="refText1">GC-0000 · Name</b></div>
+      </div>
+    </div>
+    <div class="pay-method">
+      <div class="pm-ic">📲</div>
+      <div><div class="pm-name">FNB eWallet</div>
+        <div class="pm-detail">Send to <b>081 701 0845</b><br>Ref: <b id="refText2">GC-0000 · Name</b></div>
+      </div>
+    </div>
+    <div class="pay-method">
+      <div class="pm-ic">💳</div>
+      <div><div class="pm-name">FNB Pay2Cell</div>
+        <div class="pm-detail">Send to <b>081 701 0845</b><br>Ref: <b id="refText3">GC-0000 · Name</b></div>
+      </div>
+    </div>
+
+    <div class="confirm-step" style="margin-top:18px;">
+      <span class="step-badge">2</span>
+      <p><b>Send your order</b> — tap the button below to open WhatsApp with your order pre-filled, sent straight to <b>081 701 0845</b>.</p>
+    </div>
+    <div class="confirm-step">
+      <span class="step-badge">3</span>
+      <p>Your order is <b>confirmed once payment reflects</b>. We'll reply on WhatsApp with a pickup time, or your Yango delivery fare.</p>
+    </div>
+  </div>
+  <div class="sheet-foot">
+    <button class="primary-btn" id="sendWhatsappBtn">Send order on WhatsApp →</button>
+    <button class="secondary-btn" id="newOrderBtn" style="display:none;">Start a new order</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ================= DOT RING GENERATOR (signature motif) ================= */
+function buildDots(container, n, r){
+  let html='';
+  for(let i=0;i<n;i++){
+    const a = (i/n) * Math.PI*2;
+    const x = 50 + r*Math.cos(a);
+    const y = 50 + r*Math.sin(a);
+    const size = i%3===0 ? 3.4 : 2.2;
+    const col = i%2===0 ? 'var(--blush)' : 'var(--gold)';
+    html += `<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${size}" fill="${col}"></circle>`;
+  }
+  container.innerHTML = html;
+}
+document.querySelectorAll('#preloaderDots').forEach(el=>buildDots(el,28,42));
+document.querySelectorAll('.heroDots').forEach(el=>buildDots(el,20,42));
+document.querySelectorAll('.miniDots').forEach(el=>buildDots(el,24,42));
+
+window.addEventListener('load', ()=>{
+  setTimeout(()=>document.getElementById('preloader').classList.add('hide'), 550);
+});
+
+/* ================= MENU DATA ================= */
+const MENU = {
+  platters: [
+    {id:'p-xs', name:'Extra Small (XS)', desc:'Calamari + The Works', price:160, img:'images/boil-overhead.jpg'},
+    {id:'p-1', name:'Platter for 1', desc:'1 crab leg + The Works', price:220, img:'images/hero-boil.jpg'},
+    {id:'p-23', name:'Platter for 2–3', desc:'2 crab legs + The Works', price:370, img:'images/platter-2-3.jpg'},
+    {id:'p-45', name:'Platter for 4–5', desc:'4 crab legs + The Works', price:740, img:'images/boil-overhead.jpg'},
+  ],
+  buildFeature: [
+    {id:'b-base', name:'Base Boil', desc:'Your starting point — add extras below to build it your way', price:120, img:'images/lobster-tails.jpg'},
+  ],
+  extras: [
+    {id:'e-crab', name:'Crab Leg', sub:'per portion', price:85},
+    {id:'e-lobstertail', name:'Lobster Tail', sub:'per portion', price:90},
+    {id:'e-lobster', name:'Lobster', sub:'per portion', price:130},
+    {id:'e-tigerprawn', name:'Tiger Prawn', sub:'each', price:20},
+    {id:'e-queenprawn', name:'Queen Prawn', sub:'each', price:30},
+    {id:'e-calamari', name:'Calamari', sub:'5 pieces', price:40},
+    {id:'e-mussels', name:'Mussels', sub:'5 pieces', price:30},
+    {id:'e-potatoes', name:'Potatoes', sub:'per portion', price:15},
+    {id:'e-corn', name:'Corn', sub:'per portion', price:20},
+    {id:'e-sausage', name:'Sausage', sub:'per portion', price:20},
+    {id:'e-egg', name:'Egg', sub:'each', price:5},
+  ],
+  assemble: [
+    {id:'a-wholefish', name:'Large Whole Angel Fish', desc:'Grilled in garlic herb butter', price:160, img:'images/whole-fish-open.jpg'},
+    {id:'a-halffish', name:'Half Angel Fish', desc:'Grilled in garlic herb butter', price:80, img:'images/whole-fish-open.jpg'},
+    {id:'a-fishmash', name:'Fish, Prawns & Mash', desc:'Grilled fillet with two prawns and creamy mash', price:150, img:'images/fish-prawn-mash.jpg'},
+    {id:'a-tigerskewer', name:'Tiger Prawn Skewer', sub:'each', desc:'Grilled garlic butter prawn, per skewer', price:15, img:'images/prawns-closeup.jpg'},
+    {id:'a-queenskewer', name:'Queen Prawn Skewer', sub:'each', desc:'Grilled garlic butter prawn, per skewer', price:25, img:'images/prawns-box.jpg'},
+  ],
+  snoek: [
+    {id:'s-prawns150', name:'6 x Prawns, Salad & Chips', desc:'Six grilled tiger prawns with a side salad and chips', price:150, img:'images/prawns-box.jpg'},
+    {id:'s-snoek90', name:'Snoek for 1', desc:'Grilled snoek with chips and salad', price:90, img:'images/fish-strips-fries.jpg'},
+    {id:'s-snoek110', name:'Snoek + 2 Prawns', desc:'Grilled snoek, two prawns, side of your choice', price:110, img:'images/fish-strips-fries.jpg'},
+    {id:'s-snoek210', name:'Snoek Seafood Combo', desc:'Snoek, 4 prawns, 5 mussels, 5 calamari, side of your choice', price:210, img:'images/whole-fish-open.jpg'},
+  ],
+  sides: [
+    {id:'sd-salad-s', name:'Green Salad — Small', sub:'', price:35},
+    {id:'sd-salad-l', name:'Green Salad — Large', sub:'', price:60},
+    {id:'sd-chips', name:'Chips', sub:'', price:25},
+    {id:'sd-rice', name:'Rice', sub:'', price:25},
+    {id:'sd-veg', name:'Roasted Veggies', sub:'', price:40},
+  ]
+};
+
+/* ================= CART STATE (in-memory) ================= */
+let cart = {}; // id -> {qty, item, category}
+
+function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fmt(n){ return 'N$' + n.toLocaleString('en-US'); }
+
+function setQty(itemId, item, category, qty){
+  if(qty<=0){ delete cart[itemId]; }
+  else{ cart[itemId] = {item, category, qty}; }
+  renderCartBadge();
+  renderCartBar();
+  renderCartSheet();
+}
+
+function getQty(id){ return cart[id] ? cart[id].qty : 0; }
+
+function cartCount(){ return Object.values(cart).reduce((s,c)=>s+c.qty,0); }
+function cartTotal(){ return Object.values(cart).reduce((s,c)=>s+c.qty*c.item.price,0); }
+
+function renderCartBadge(){
+  const n = cartCount();
+  const badge = document.getElementById('headerBadge');
+  badge.style.display = n>0 ? 'flex' : 'none';
+  badge.textContent = n;
+}
+function renderCartBar(){
+  const n = cartCount();
+  const bar = document.getElementById('cartBar');
+  if(n>0){
+    bar.classList.add('show');
+    document.getElementById('cbCount').textContent = n + (n===1?' item':' items');
+    document.getElementById('cbTotal').textContent = fmt(cartTotal());
+  } else {
+    bar.classList.remove('show');
+  }
+}
+
+/* ================= RENDER PRODUCT CARDS ================= */
+function allItems(){
+  return [...MENU.platters,...MENU.buildFeature,...MENU.extras,...MENU.assemble,...MENU.snoek,...MENU.sides];
+}
+function qtyControlHTML(qty){
+  if(qty<=0) return `<button class="add-btn">+</button>`;
+  return `<div class="stepper"><button data-step="-1">−</button><span>${qty}</span><button data-step="1">+</button></div>`;
+}
+function productCardHTML(item){
+  const qty = getQty(item.id);
+  return `
+  <div class="p-card glass" data-id="${item.id}">
+    <div class="thumb"><img src="${item.img}" alt="${esc(item.name)}" loading="lazy"></div>
+    <div class="body">
+      <div class="top-row"><h3>${esc(item.name)}</h3></div>
+      <p class="desc">${esc(item.desc)}</p>
+      <div class="bottom-row">
+        <div class="price">${fmt(item.price)}${item.sub?` <small>${esc(item.sub)}</small>`:''}</div>
+        <div class="qty-slot">${qtyControlHTML(qty)}</div>
+      </div>
+    </div>
+  </div>`;
+}
+function listCardHTML(item){
+  const qty = getQty(item.id);
+  return `
+  <div class="list-card glass" data-id="${item.id}">
+    <div>
+      <div class="li-name">${esc(item.name)}</div>
+      ${item.sub?`<div class="li-sub">${esc(item.sub)}</div>`:''}
+    </div>
+    <div class="li-right">
+      <div class="price">${fmt(item.price)}</div>
+      <div class="qty-slot">${qtyControlHTML(qty)}</div>
+    </div>
+  </div>`;
+}
+
+/* ================= INITIAL + RE-RENDER ================= */
+function cleanRender(){
+  document.getElementById('platterGrid').innerHTML = MENU.platters.map(productCardHTML).join('');
+  document.getElementById('buildFeature').innerHTML = MENU.buildFeature.map(productCardHTML).join('');
+  document.getElementById('extrasList').innerHTML = MENU.extras.map(listCardHTML).join('');
+  document.getElementById('assembleGrid').innerHTML = MENU.assemble.map(productCardHTML).join('');
+  document.getElementById('snoekGrid').innerHTML = MENU.snoek.map(productCardHTML).join('');
+  document.getElementById('sidesList').innerHTML = MENU.sides.map(listCardHTML).join('');
+}
+cleanRender();
+
+/* ================= LIVE MENU FROM SUPABASE ================= */
+const SECTION_OF = {platters:'cat-platters',buildFeature:'cat-build',assemble:'cat-assemble',snoek:'cat-snoek',sides:'cat-sides'};
+function syncSections(){
+  Object.entries(SECTION_OF).forEach(([k,id])=>{
+    const empty = k==='buildFeature' ? (!MENU.buildFeature.length && !MENU.extras.length) : !MENU[k].length;
+    const sec=document.getElementById(id), chip=document.querySelector(`.cat-chip[data-target="${id}"]`);
+    if(sec){ sec.style.display=empty?'none':''; if(sec.nextElementSibling) sec.nextElementSibling.style.display=empty?'none':''; }
+    if(chip) chip.style.display=empty?'none':'';
+  });
+}
+async function loadLiveMenu(){
+  try{
+    if(!window.supabase || !window.SUPABASE_URL || window.SUPABASE_URL.includes('YOUR-PROJECT')) return;
+    const {data,error} = await sb.from('menu_items').select('*').eq('is_available',true).order('sort_order').order('created_at');
+    if(error || !data) throw error;
+    Object.keys(SECTION_OF).concat('extras').forEach(k=>MENU[k]=[]);
+    data.forEach(r=>{ if(MENU[r.category]) MENU[r.category].push({id:r.id,name:r.name,desc:r.description||'',sub:r.sub||'',price:r.price,img:r.image_url||'images/logo.png'}); });
+    cleanRender(); syncSections();
+  }catch(e){ console.warn('Using built-in menu:', e); }
+}
+const sb = (window.supabase && window.SUPABASE_URL) ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null;
+loadLiveMenu();
+
+/* ================= EVENT DELEGATION FOR ADD / STEP ================= */
+document.body.addEventListener('click', function(e){
+  const card = e.target.closest('[data-id]');
+  if(!card) return;
+  const id = card.getAttribute('data-id');
+  const item = allItems().find(i=>i.id===id);
+  if(!item) return;
+
+  if(e.target.closest('.add-btn')){
+    setQty(id, item, '', getQty(id)+1);
+    updateCardQty(card, id);
+    showToast(`Added ${item.name}`);
+  }
+  const stepBtn = e.target.closest('[data-step]');
+  if(stepBtn){
+    const delta = parseInt(stepBtn.getAttribute('data-step'),10);
+    setQty(id, item, '', getQty(id)+delta);
+    updateCardQty(card, id);
+    showToast(delta>0 ? `Added ${item.name}` : `Updated ${item.name}`);
+  }
+});
+function updateCardQty(card, id){
+  const slot = card.querySelector('.qty-slot');
+  if(slot) slot.innerHTML = qtyControlHTML(getQty(id));
+}
+
+/* ================= TOAST ================= */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 1600);
+}
+
+/* ================= CATEGORY RAIL SCROLL SPY ================= */
+document.querySelectorAll('.cat-chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.getElementById(chip.dataset.target).scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+function scrollToMenu(){ document.getElementById('cat-platters').scrollIntoView({behavior:'smooth'}); }
+
+/* ================= SHEETS ================= */
+function openSheet(overlayId, sheetId){
+  document.getElementById(overlayId).classList.add('open');
+  document.getElementById(sheetId).classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeSheet(overlayId, sheetId){
+  document.getElementById(overlayId).classList.remove('open');
+  document.getElementById(sheetId).classList.remove('open');
+  document.body.style.overflow='';
+}
+
+document.getElementById('openCartHeader').onclick = ()=>{ renderCartSheet(); openSheet('cartOverlay','cartSheet'); };
+document.getElementById('openCartFromBar').onclick = ()=>{ renderCartSheet(); openSheet('cartOverlay','cartSheet'); };
+document.getElementById('closeCart').onclick = ()=> closeSheet('cartOverlay','cartSheet');
+document.getElementById('cartOverlay').onclick = ()=> closeSheet('cartOverlay','cartSheet');
+
+document.getElementById('goCheckout').onclick = ()=>{
+  closeSheet('cartOverlay','cartSheet');
+  document.getElementById('coSubtotal').textContent = fmt(cartTotal());
+  document.getElementById('coTotal').textContent = fmt(cartTotal());
+  openSheet('checkoutOverlay','checkoutSheet');
+};
+document.getElementById('closeCheckout').onclick = ()=> closeSheet('checkoutOverlay','checkoutSheet');
+document.getElementById('checkoutOverlay').onclick = ()=> closeSheet('checkoutOverlay','checkoutSheet');
+
+document.getElementById('closeConfirm').onclick = ()=> closeSheet('confirmOverlay','confirmSheet');
+document.getElementById('confirmOverlay').onclick = ()=> closeSheet('confirmOverlay','confirmSheet');
+
+function renderCartSheet(){
+  const body = document.getElementById('cartBody');
+  const foot = document.getElementById('cartFoot');
+  const entries = Object.values(cart);
+  if(entries.length===0){
+    body.innerHTML = `<div class="empty-cart">
+      <span class="dot-ring"><svg viewBox="0 0 100 100"><g class="emptyDots"></g></svg></span>
+      <p>Your cart is empty.<br>Add something delicious.</p>
+    </div>`;
+    buildDots(body.querySelector('.emptyDots'),18,42);
+    foot.style.display='none';
+    return;
+  }
+  body.innerHTML = entries.map(c=>`
+    <div class="cart-item">
+      <img src="${c.item.img||'images/logo.png'}" alt="">
+      <div class="ci-info">
+        <div class="ci-name">${c.qty} × ${esc(c.item.name)}</div>
+        <div class="ci-price">${fmt(c.item.price)} each · ${fmt(c.item.price*c.qty)}</div>
+      </div>
+      <button class="ci-remove" data-remove="${c.item.id}">Remove</button>
+    </div>
+  `).join('');
+  foot.style.display='block';
+  document.getElementById('sumSubtotal').textContent = fmt(cartTotal());
+  document.getElementById('sumTotal').textContent = fmt(cartTotal());
+
+  body.querySelectorAll('[data-remove]').forEach(btn=>{
+    btn.onclick = ()=>{
+      const id = btn.getAttribute('data-remove');
+      delete cart[id];
+      renderCartBadge(); renderCartBar(); renderCartSheet();
+      cleanRender();
+      showToast('Removed from cart');
+    };
+  });
+}
+
+/* ================= FULFILLMENT TOGGLE ================= */
+let fulfillMode = 'pickup';
+function setFulfillMode(mode){
+  fulfillMode = mode;
+  document.getElementById('optPickup').classList.toggle('active', mode==='pickup');
+  document.getElementById('optDelivery').classList.toggle('active', mode==='delivery');
+  document.getElementById('optDineIn').classList.toggle('active', mode==='dinein');
+  document.getElementById('pickupNote').style.display = mode==='pickup' ? 'block' : 'none';
+  document.getElementById('deliveryFields').style.display = mode==='delivery' ? 'block' : 'none';
+  document.getElementById('dineInNote').style.display = mode==='dinein' ? 'block' : 'none';
+}
+document.getElementById('optPickup').onclick = ()=> setFulfillMode('pickup');
+document.getElementById('optDelivery').onclick = ()=> setFulfillMode('delivery');
+document.getElementById('optDineIn').onclick = ()=> setFulfillMode('dinein');
+
+/* ================= ORDER NUMBER + WHATSAPP ================= */
+let currentOrderNumber = '';
+function generateOrderNumber(){
+  const d = new Date();
+  const stamp = d.getFullYear().toString().slice(2) + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+  const rand = Math.floor(100 + Math.random()*900);
+  return `GC-${stamp}-${rand}`;
+}
+
+document.getElementById('reviewOrderBtn').onclick = ()=>{
+  const name = document.getElementById('custName').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
+  if(!name){ showToast('Please enter your name'); document.getElementById('custName').focus(); return; }
+  if(!phone){ showToast('Please enter your phone number'); document.getElementById('custPhone').focus(); return; }
+  if(fulfillMode==='delivery' && !document.getElementById('custAddress').value.trim()){
+    showToast('Please add a delivery address'); document.getElementById('custAddress').focus(); return;
+  }
+  if(cartCount()===0){ showToast('Your cart is empty'); return; }
+
+  currentOrderNumber = generateOrderNumber();
+  document.getElementById('orderNumDisplay').textContent = currentOrderNumber;
+  const refStr = `${currentOrderNumber} · ${name}`;
+  document.getElementById('refText1').textContent = refStr;
+  document.getElementById('refText2').textContent = refStr;
+  document.getElementById('refText3').textContent = refStr;
+  document.getElementById('refCallout').textContent = refStr;
+
+  document.getElementById('sendWhatsappBtn').style.display='flex';
+  document.getElementById('newOrderBtn').style.display='none';
+
+  closeSheet('checkoutOverlay','checkoutSheet');
+  openSheet('confirmOverlay','confirmSheet');
+};
+
+document.getElementById('copyRefBtn').onclick = ()=>{
+  const t = document.getElementById('refCallout').textContent;
+  (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(()=>showToast('Reference copied')).catch(()=>showToast('Long-press the reference to copy'));
+};
+document.getElementById('sendWhatsappBtn').onclick = ()=>{
+  const name = document.getElementById('custName').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
+  const notes = document.getElementById('custNotes').value.trim();
+  const address = document.getElementById('custAddress').value.trim();
+
+  let lines = [];
+  lines.push(`*New order — Garlic & Co*`);
+  lines.push(`Order ref: *${currentOrderNumber}*`);
+  lines.push(`Name: ${name}`);
+  lines.push(`Phone: ${phone}`);
+  lines.push(`Fulfillment: ${fulfillMode==='pickup' ? 'Pickup (Ausspannplatz)' : fulfillMode==='delivery' ? 'Yango Delivery' : "Dine-in — I'll eat there (Ausspannplatz)"}`);
+  if(fulfillMode==='delivery' && address) lines.push(`Address: ${address}`);
+  lines.push('');
+  lines.push('Items:');
+  Object.values(cart).forEach(c=>{
+    lines.push(`• ${c.qty} x ${c.item.name} — ${fmt(c.item.price*c.qty)}`);
+  });
+  lines.push('');
+  lines.push(`Total: ${fmt(cartTotal())}`);
+  if(notes) lines.push(`Notes: ${notes}`);
+  lines.push('');
+  lines.push(`Payment will be sent as EFT / eWallet / Pay2Cell with reference "${currentOrderNumber} · ${name}".`);
+
+  if(sb){ sb.from('orders').insert({order_ref:currentOrderNumber,customer_name:name,phone,fulfillment:fulfillMode,address:fulfillMode==='delivery'?address:null,notes:notes||null,total:cartTotal(),items:Object.values(cart).map(c=>({id:c.item.id,name:c.item.name,qty:c.qty,price:c.item.price}))}).then(({error})=>{ if(error) console.warn('Order not logged',error); }); }
+  const text = encodeURIComponent(lines.join('\n'));
+  const waUrl = `https://wa.me/264817010845?text=${text}`;
+  window.open(waUrl, '_blank');
+
+  document.getElementById('sendWhatsappBtn').style.display='none';
+  document.getElementById('newOrderBtn').style.display='block';
+  showToast('Opening WhatsApp…');
+};
+
+document.getElementById('newOrderBtn').onclick = ()=>{
+  cart = {};
+  renderCartBadge(); renderCartBar(); cleanRender();
+  document.getElementById('custName').value='';
+  document.getElementById('custPhone').value='';
+  document.getElementById('custAddress').value='';
+  document.getElementById('custNotes').value='';
+  closeSheet('confirmOverlay','confirmSheet');
+  showToast('Ready for a new order');
+};
+
+/* ================= INSTALL / MINI-APP PROMPT (phones only) ================= */
+/* We only ever want the "add to home screen" nudge on actual smartphones —
+   never on desktop or tablets, even if the browser would technically allow it. */
+function isPhone(){
+  const ua = navigator.userAgent || '';
+  const isIPad = /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  if(isIPad) return false; // tablet, not a phone
+  const isMobileUA = /iPhone|iPod|Android.*Mobile|Windows Phone|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+  const isAndroidTablet = /Android/i.test(ua) && !/Mobile/i.test(ua);
+  if(isAndroidTablet) return false;
+  const coarsePointer = window.matchMedia && window.matchMedia('(pointer:coarse)').matches;
+  const smallViewport = Math.min(window.innerWidth, window.innerHeight) <= 480;
+  return isMobileUA || (coarsePointer && smallViewport);
+}
+function isIOS(){
+  const ua = navigator.userAgent || '';
+  return /iPhone|iPod/.test(ua);
+}
+function isStandalone(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+
+let deferredPrompt;
+const installBanner = document.getElementById('installBanner');
+
+if(isPhone() && !isStandalone()){
+  window.addEventListener('beforeinstallprompt', (e)=>{
+    e.preventDefault();
+    deferredPrompt = e;
+    installBanner.classList.add('show');
+  });
+
+  // iOS Safari on a phone has no beforeinstallprompt — show manual instructions instead.
+  if(isIOS()){
+    setTimeout(()=>{
+      installBanner.querySelector('.txt').innerHTML = '<b>Add Garlic & Co to your home screen</b>Tap Share, then "Add to Home Screen"';
+      installBanner.querySelector('#installBtn').style.display = 'none';
+      installBanner.classList.add('show');
+    }, 2200);
+  }
+}
+
+document.getElementById('installBtn').onclick = async ()=>{
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBanner.classList.remove('show');
+  } else {
+    showToast('Use your browser menu → "Add to Home Screen"');
+  }
+};
+document.getElementById('installClose').onclick = ()=>{
+  installBanner.classList.remove('show');
+};
+
+/* ================= SERVICE WORKER (offline + installability) ================= */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{ /* offline support just won't be available */ });
+  });
+}
+
+/* init badges */
+renderCartBadge();
+renderCartBar();
+</script>
+</body>
+</html>

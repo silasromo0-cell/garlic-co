@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Garlic & Co — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="../config.js"></script>
+<style>
+:root{--bg:#1c1517;--panel:rgba(255,255,255,.055);--bd:rgba(255,255,255,.12);--cream:#f6efe8;--muted:#b9a9ac;--blush:#e8a6a0;--gold:#e0b876;--ok:#7fd28a;--bad:#e8746a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--cream);font:14px/1.45 Manrope,sans-serif}
+h1,h2,h3{font-family:Fraunces,serif;font-weight:600;margin:0}button,input,select,textarea{font:inherit;color:inherit}
+.hide{display:none!important}
+input,select,textarea{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--blush)}select option{background:#241a1d}
+label{display:block;font-size:12px;color:var(--muted);margin:12px 0 5px}
+.btn{border:1px solid var(--bd);background:var(--panel);border-radius:100px;padding:9px 16px;font-weight:700;cursor:pointer}
+.btn.pri{background:var(--blush);color:#2a1613;border-color:var(--blush)}.btn.danger{color:var(--bad)}.btn.sm{padding:5px 11px;font-size:12px}
+.box{background:var(--panel);border:1px solid var(--bd);border-radius:20px;padding:18px}
+#login{min-height:100vh;display:grid;place-items:center;padding:20px}#login .box{width:min(380px,100%)}
+header{display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:rgba(28,21,23,.9);backdrop-filter:blur(14px);z-index:5;flex-wrap:wrap}
+header img{width:36px;height:36px;border-radius:50%}header .sp{flex:1}
+nav{display:flex;gap:6px}nav button{border:0;background:none;padding:8px 14px;border-radius:100px;color:var(--muted);font-weight:700;cursor:pointer}
+nav button.on{background:var(--cream);color:var(--bg)}
+main{max-width:1180px;margin:0 auto;padding:22px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+.kpi b{display:block;font:600 28px Fraunces,serif;color:var(--gold)}.kpi span{color:var(--muted);font-size:12.5px}
+.charts{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px}.charts.two{grid-template-columns:1fr 1fr}
+@media(max-width:800px){.charts,.charts.two{grid-template-columns:1fr}}
+.box h3{font-size:16px;margin-bottom:10px}.cv{position:relative;height:230px}
+table{width:100%;border-collapse:collapse}th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:8px}td{padding:10px 8px;border-top:1px solid var(--bd);vertical-align:middle}
+.scroll{overflow-x:auto}
+.thumb{width:46px;height:46px;border-radius:10px;object-fit:cover;background:var(--panel)}
+.pill{padding:3px 10px;border-radius:100px;font-size:12px;font-weight:700;background:var(--panel)}
+.s-new{color:var(--gold)}.s-paid{color:var(--ok)}.s-done{color:var(--muted)}.s-cancelled{color:var(--bad)}
+.tools{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}.tools select{width:auto}
+.sw{position:relative;width:42px;height:24px;display:inline-block}.sw input{opacity:0;width:0;height:0}
+.sw i{position:absolute;inset:0;background:rgba(255,255,255,.15);border-radius:24px;cursor:pointer;transition:.2s}
+.sw i:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:var(--cream);border-radius:50%;transition:.2s}
+.sw input:checked+i{background:var(--ok)}.sw input:checked+i:before{transform:translateX(18px)}
+dialog{background:#241a1d;color:var(--cream);border:1px solid var(--bd);border-radius:22px;width:min(460px,94vw);padding:22px}dialog::backdrop{background:rgba(0,0,0,.6)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.msg{color:var(--bad);margin-top:10px;min-height:18px}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--cream);color:var(--bg);padding:10px 18px;border-radius:100px;font-weight:700;opacity:0;transition:.3s;pointer-events:none}#toast.on{opacity:1}
+</style></head><body>
+
+<div id="login" class="hide"><form class="box" id="loginForm">
+  <h2>Garlic & Co admin</h2><p style="color:var(--muted);margin:4px 0 0">Sign in to manage your menu and orders.</p>
+  <label>Email</label><input type="email" id="em" required autocomplete="username">
+  <label>Password</label><input type="password" id="pw" required autocomplete="current-password">
+  <div class="msg" id="loginMsg"></div><button class="btn pri" style="width:100%;margin-top:6px">Sign in</button>
+</form></div>
+
+<div id="app" class="hide">
+<header><img src="../images/logo.png" alt=""><h2>Garlic & Co</h2>
+  <nav id="nav"><button data-v="dash" class="on">Dashboard</button><button data-v="menu">Menu</button><button data-v="orders">Orders</button></nav>
+  <span class="sp"></span><a class="btn sm" href="../" target="_blank" style="text-decoration:none">View site ↗</a><button class="btn sm" id="out">Sign out</button></header>
+<main>
+ <section id="v-dash">
+  <div class="kpis" id="kpis"></div>
+  <div class="charts"><div class="box"><h3>Revenue, last 14 days</h3><div class="cv"><canvas id="c1"></canvas></div></div>
+   <div class="box"><h3>How customers get it</h3><div class="cv"><canvas id="c2"></canvas></div></div></div>
+  <div class="charts two"><div class="box"><h3>Best sellers</h3><div class="cv"><canvas id="c3"></canvas></div></div>
+   <div class="box"><h3>Latest orders</h3><div class="scroll" id="latest"></div></div></div>
+ </section>
+ <section id="v-menu" class="hide">
+  <div class="tools"><h2 style="flex:1">Website menu</h2><select id="catFilter"></select><button class="btn pri" id="addItem">+ Add item</button></div>
+  <div class="box scroll"><table><thead><tr><th></th><th>Item</th><th>Category</th><th>Price</th><th>On website</th><th></th></tr></thead><tbody id="menuRows"></tbody></table></div>
+ </section>
+ <section id="v-orders" class="hide">
+  <div class="tools"><h2 style="flex:1">Orders</h2><select id="stFilter"><option value="">All statuses</option><option>new</option><option>paid</option><option>done</option><option>cancelled</option></select></div>
+  <div class="box scroll"><table><thead><tr><th>Ref</th><th>Customer</th><th>Items</th><th>Total</th><th>Type</th><th>Status</th></tr></thead><tbody id="orderRows"></tbody></table></div>
+ </section>
+</main></div>
+
+<dialog id="dlg"><form id="itemForm" method="dialog">
+ <h2 id="dlgTitle">Add item</h2>
+ <label>Name</label><input id="f_name" required>
+ <label>Description</label><textarea id="f_desc" rows="2"></textarea>
+ <div class="row"><div><label>Price (N$)</label><input id="f_price" type="number" min="0" step="1" required></div><div><label>Unit note (optional)</label><input id="f_sub" placeholder="each, per portion…"></div></div>
+ <label>Category</label><select id="f_cat"></select>
+ <label>Photo (upload new, or keep current)</label><input type="file" id="f_file" accept="image/*">
+ <div class="msg" id="dlgMsg"></div>
+ <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px"><button type="button" class="btn" id="cancel">Cancel</button><button class="btn pri" id="save">Save</button></div>
+</form></dialog><div id="toast"></div>
+
+<script>
+const CATS={platters:'Boil Platters',buildFeature:'Build Your Own (base)',extras:'Build Your Own (extras)',assemble:'Grilled Fish & Prawns',snoek:'Snoek Combos',sides:'Sides'};
+const $=id=>document.getElementById(id), N=n=>'N$'+Number(n||0).toLocaleString('en-US');
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+let menu=[],orders=[],editing=null,charts={};
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}
+const imgSrc=u=>!u?'../images/logo.png':/^https?:/.test(u)?u:'../'+u;
+
+/* ---- auth ---- */
+async function boot(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){$('login').classList.remove('hide');$('app').classList.add('hide');return}
+  const {data:ok}=await sb.rpc('is_admin');
+  if(!ok){await sb.auth.signOut();$('loginMsg').textContent='This account is not an admin.';$('login').classList.remove('hide');return}
+  $('login').classList.add('hide');$('app').classList.remove('hide');await refresh();
+}
+$('loginForm').onsubmit=async e=>{e.preventDefault();$('loginMsg').textContent='';
+  const {error}=await sb.auth.signInWithPassword({email:$('em').value,password:$('pw').value});
+  if(error)$('loginMsg').textContent=error.message;else boot()};
+$('out').onclick=async()=>{await sb.auth.signOut();boot()};
+$('nav').onclick=e=>{const v=e.target.dataset.v;if(!v)return;
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  ['dash','menu','orders'].forEach(x=>$('v-'+x).classList.toggle('hide',x!==v))};
+
+async function refresh(){
+  const [m,o]=await Promise.all([sb.from('menu_items').select('*').order('sort_order').order('created_at'),sb.from('orders').select('*').order('created_at',{ascending:false}).limit(1000)]);
+  if(m.error||o.error){toast((m.error||o.error).message);return}
+  menu=m.data;orders=o.data;drawDash();drawMenu();drawOrders();
+}
+
+/* ---- dashboard ---- */
+function mk(id,cfg){charts[id]?.destroy();Chart.defaults.color='#b9a9ac';Chart.defaults.borderColor='rgba(255,255,255,.08)';charts[id]=new Chart($(id),cfg)}
+function drawDash(){
+  const live=orders.filter(o=>o.status!=='cancelled'), day=d=>new Date(d).toDateString(), today=day(new Date());
+  const rev=live.reduce((s,o)=>s+o.total,0), tdy=live.filter(o=>day(o.created_at)===today);
+  $('kpis').innerHTML=[[N(tdy.reduce((s,o)=>s+o.total,0)),'Sales today'],[tdy.length,'Orders today'],[N(live.length?Math.round(rev/live.length):0),'Average order'],[orders.filter(o=>o.status==='new').length,'Waiting for payment'],[menu.filter(i=>i.is_available).length+'/'+menu.length,'Items on website']]
+    .map(([v,l])=>`<div class="box kpi"><b>${v}</b><span>${l}</span></div>`).join('');
+  const days=[...Array(14)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-13+i);return d});
+  mk('c1',{type:'bar',data:{labels:days.map(d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})),datasets:[{data:days.map(d=>live.filter(o=>day(o.created_at)===d.toDateString()).reduce((s,o)=>s+o.total,0)),backgroundColor:'#e8a6a0',borderRadius:6}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+  const ft={pickup:0,delivery:0,dinein:0};live.forEach(o=>ft[o.fulfillment]++);
+  mk('c2',{type:'doughnut',data:{labels:['Pickup','Delivery','Dine-in'],datasets:[{data:Object.values(ft),backgroundColor:['#e8a6a0','#e0b876','#7fd28a'],borderWidth:0}]},options:{maintainAspectRatio:false,cutout:'66%'}});
+  const t={};live.forEach(o=>o.items.forEach(i=>t[i.name]=(t[i.name]||0)+i.qty));
+  const top=Object.entries(t).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  mk('c3',{type:'bar',data:{labels:top.map(x=>x[0]),datasets:[{data:top.map(x=>x[1]),backgroundColor:'#e0b876',borderRadius:6}]},options:{indexAxis:'y',maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  $('latest').innerHTML=orders.length?`<table>${orders.slice(0,6).map(o=>`<tr><td>${esc(o.order_ref)}</td><td>${esc(o.customer_name)}</td><td>${N(o.total)}</td><td class="s-${o.status}">${o.status}</td></tr>`).join('')}</table>`:'<p style="color:var(--muted)">No orders yet. New orders from the website show up here.</p>';
+}
+
+/* ---- menu management ---- */
+$('catFilter').innerHTML='<option value="">All categories</option>'+Object.entries(CATS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+$('f_cat').innerHTML=Object.entries(CATS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+$('catFilter').onchange=drawMenu;
+function drawMenu(){
+  const f=$('catFilter').value, rows=menu.filter(i=>!f||i.category===f);
+  $('menuRows').innerHTML=rows.map(i=>`<tr><td><img class="thumb" src="${esc(imgSrc(i.image_url))}" alt=""></td><td><b>${esc(i.name)}</b><div style="color:var(--muted);font-size:12px">${esc(i.description||'')}</div></td><td>${CATS[i.category]}</td><td>${N(i.price)} <small style="color:var(--muted)">${esc(i.sub||'')}</small></td>
+  <td><label class="sw" style="margin:0"><input type="checkbox" ${i.is_available?'checked':''} data-tog="${i.id}"><i></i></label></td>
+  <td style="white-space:nowrap"><button class="btn sm" data-edit="${i.id}">Edit</button> <button class="btn sm danger" data-del="${i.id}">Remove</button></td></tr>`).join('')||'<tr><td colspan="6" style="color:var(--muted)">Nothing here yet. Add your first item.</td></tr>';
+}
+$('menuRows').onclick=async e=>{
+  const id=e.target.dataset.edit||e.target.dataset.del; if(!id)return; const it=menu.find(x=>x.id===id);
+  if(e.target.dataset.edit)return openDlg(it);
+  if(confirm(`Remove "${it.name}" from the website for good?\n(Tip: use the switch to hide it without deleting.)`)){
+    const {error}=await sb.from('menu_items').delete().eq('id',id);error?toast(error.message):(toast('Removed'),refresh())}};
+$('menuRows').onchange=async e=>{const id=e.target.dataset.tog;if(!id)return;
+  const {error}=await sb.from('menu_items').update({is_available:e.target.checked}).eq('id',id);
+  error?toast(error.message):(toast(e.target.checked?'Now on the website':'Hidden from the website'),refresh())};
+function openDlg(it){editing=it||null;$('dlgTitle').textContent=it?'Edit item':'Add item';
+  $('f_name').value=it?.name||'';$('f_desc').value=it?.description||'';$('f_price').value=it?.price??'';$('f_sub').value=it?.sub||'';
+  $('f_cat').value=it?.category||($('catFilter').value||'platters');$('f_file').value='';$('dlgMsg').textContent='';$('dlg').showModal()}
+$('addItem').onclick=()=>openDlg();$('cancel').onclick=()=>$('dlg').close();
+$('itemForm').onsubmit=async e=>{e.preventDefault();$('save').disabled=true;$('dlgMsg').textContent='';
+  try{
+    let image_url=editing?.image_url||null;const file=$('f_file').files[0];
+    if(file){const path=Date.now()+'-'+file.name.replace(/[^\w.-]/g,'_');
+      const up=await sb.storage.from('menu-images').upload(path,file,{cacheControl:'31536000'});if(up.error)throw up.error;
+      image_url=sb.storage.from('menu-images').getPublicUrl(path).data.publicUrl}
+    const row={name:$('f_name').value.trim(),description:$('f_desc').value.trim(),price:parseInt($('f_price').value,10),sub:$('f_sub').value.trim(),category:$('f_cat').value,image_url};
+    const q=editing?sb.from('menu_items').update(row).eq('id',editing.id):sb.from('menu_items').insert({...row,sort_order:menu.length});
+    const {error}=await q;if(error)throw error;
+    $('dlg').close();toast(editing?'Saved':'Added to the website');refresh();
+  }catch(err){$('dlgMsg').textContent=err.message}finally{$('save').disabled=false}};
+
+/* ---- orders ---- */
+$('stFilter').onchange=drawOrders;
+function drawOrders(){
+  const f=$('stFilter').value;
+  $('orderRows').innerHTML=orders.filter(o=>!f||o.status===f).map(o=>`<tr><td><b>${esc(o.order_ref)}</b><div style="color:var(--muted);font-size:12px">${new Date(o.created_at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div></td>
+  <td>${esc(o.customer_name)}<div style="color:var(--muted);font-size:12px">${esc(o.phone)}${o.address?' · '+esc(o.address):''}</div></td>
+  <td style="font-size:12.5px">${o.items.map(i=>`${i.qty}× ${esc(i.name)}`).join('<br>')}${o.notes?`<div style="color:var(--gold)">Note: ${esc(o.notes)}</div>`:''}</td><td>${N(o.total)}</td><td>${o.fulfillment}</td>
+  <td><select data-st="${o.id}" class="s-${o.status}" style="width:auto">${['new','paid','done','cancelled'].map(s=>`<option ${s===o.status?'selected':''}>${s}</option>`).join('')}</select></td></tr>`).join('')||'<tr><td colspan="6" style="color:var(--muted)">No orders to show.</td></tr>';
+}
+$('orderRows').onchange=async e=>{const id=e.target.dataset.st;if(!id)return;
+  const {error}=await sb.from('orders').update({status:e.target.value}).eq('id',id);error?toast(error.message):(toast('Order updated'),refresh())};
+boot();
+</script></body></html>
